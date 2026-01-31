@@ -1,0 +1,2 @@
+SOP1 = 0x8D
+SOP2 = 0x0A
