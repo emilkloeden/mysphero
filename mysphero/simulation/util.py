@@ -1,21 +1,15 @@
-from mysphero.packet.constants import SOP1, SOP2
-from mysphero.packet.util import checksum
+from mysphero.packet.util import encode_packet
 
 
 def make_response(did, cid, seq, code=0x00, data=b""):
-    flags = 0x08  # response
-    body = (
-        bytes(
-            [
-                flags,
-                did,
-                cid,
-                seq,
-                len(data) + 2,  # code + checksum
-                code,
-            ]
-        )
-        + data
-    )
+    # Build a response packet: flags will have is_response (0x01) set
+    # We encode it as a regular packet then patch the flags byte
+    # Simpler: just build the raw response directly
+    from mysphero.packet.constants import SOP, EOP
+    from mysphero.packet.util import checksum, escape
 
-    return bytes([SOP1, SOP2]) + body + bytes([checksum(body)])
+    flags = 0x09  # is_response | is_activity
+    payload = bytearray([flags, did, cid, seq, code])
+    payload.extend(data)
+    payload.append(checksum(payload))
+    return bytes([SOP]) + escape(bytes(payload)) + bytes([EOP])

@@ -13,29 +13,23 @@ class Protocol:
 
         transport.set_receive_callback(self._on_receive)
 
-    def make_command(
-        self, did: int, cid: int, data: bytes = b"", flags: int = 0x0A
-    ) -> bytes:
+    async def send(
+        self, did: int, cid: int, data: bytes = b"",
+        *, tid: int | None = None, sid: int | None = None,
+    ):
         seq = self.seq
-        self.seq = (self.seq + 1) & 0xFF
+        self.seq = (self.seq + 1) % 255
 
-        pkt = encode_packet(flags, did, cid, seq, data)
+        pkt = encode_packet(did, cid, seq, data, tid=tid, sid=sid)
         self.pending[seq] = (did, cid)
 
-        return pkt
-
-    def handle_response(self, rsp: dict):
-        seq = rsp["seq"]
-        self.pending.pop(seq, None)
-        return rsp
-
-    async def send(self, did: int, cid: int, data: bytes = b""):
-        pkt = self.make_command(did, cid, data)
-        log.info(f"Sending packet: {pkt.hex(' ').upper()} (length: {len(pkt)})")
+        log.info(f"Sending packet: {pkt.hex(' ').upper()}")
         await self.transport.write(pkt)
 
     def _on_receive(self, data: bytes):
-        for raw in self.assembler.push(data):
-            rsp = decode_response(raw)
+        for payload in self.assembler.push(data):
+            rsp = decode_response(payload)
             if rsp:
-                self.handle_response(rsp)
+                seq = rsp["seq"]
+                self.pending.pop(seq, None)
+                log.debug(f"Response: SEQ={seq} code={rsp['code']}")

@@ -1,9 +1,7 @@
 from bleak import BleakClient
 from mysphero.transport.transport import Transport
 
-SPHERO_SERVICE = "00010001-574f-4f20-5370-6865726f2121"
-SPHERO_TX_CHAR = "00010002-574f-4f20-5370-6865726f2121"
-SPHERO_RX_CHAR = "00010003-574f-4f20-5370-6865726f2121"
+SPHERO_CHAR = "00010002-574f-4f20-5370-6865726f2121"
 
 
 class BleakTransport(Transport):
@@ -13,7 +11,7 @@ class BleakTransport(Transport):
 
     async def connect(self):
         await self.client.connect()
-        await self.client.start_notify(SPHERO_RX_CHAR, self._on_notify)
+        await self.client.start_notify(SPHERO_CHAR, self._on_notify)
 
     async def disconnect(self):
         await self.client.disconnect()
@@ -22,7 +20,7 @@ class BleakTransport(Transport):
         self.rx_cb = fn
 
     async def write(self, data: bytes):
-        await self.client.write_gatt_char(SPHERO_TX_CHAR, data, response=False)
+        await self.client.write_gatt_char(SPHERO_CHAR, data, response=False)
 
     def _on_notify(self, sender, data: bytes):
         if self.rx_cb:
