@@ -1,13 +1,11 @@
 from mysphero.transport.simulatedtransport import SimulatedTransport
-from mysphero.protocol.protocol import Protocol
+from mysphero.device.bolt_plus import BoltPlus
 
 
 def main():
     transport = SimulatedTransport(mtu=8)
-    proto = Protocol(transport)
-
-    data = bytes([10, 20, 30])
-    proto.send(0x02, 0x20, data)
+    bolt = BoltPlus(transport)
+    bolt.set_main_led((10, 20, 30))
 
 
 if __name__ == "__main__":

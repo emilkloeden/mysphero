@@ -1,4 +1,4 @@
-from mysphero.device.simulatedsphero import SimulatedSphero
+from mysphero.simulation.simulatedsphero import SimulatedSphero
 from mysphero.transport.transport import Transport
 from mysphero.transport.util import chunk_bytes
 from mysphero.logger.logger import log

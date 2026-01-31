@@ -1,4 +1,4 @@
-from mysphero.device.util import make_response
+from mysphero.simulation.util import make_response
 from mysphero.packet.assembler import PacketAssembler
 from mysphero.packet.util import checksum
 from mysphero.logger.logger import log
