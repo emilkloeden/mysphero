@@ -10,10 +10,16 @@ class SimulatedTransport(Transport):
         self.rx_cb = None
         self.mtu = mtu
 
+    async def connect(self):
+        pass
+
+    async def disconnect(self):
+        pass
+
     def set_receive_callback(self, fn):
         self.rx_cb = fn
 
-    def write(self, data: bytes):
+    async def write(self, data: bytes):
         # simulate BLE write fragmentation
         log.debug(f"[SIM TRANSPORT] Write: data={data.hex(' ').upper()} {len(data)=}")
         for chunk in chunk_bytes(data, self.mtu):

@@ -29,10 +29,10 @@ class Protocol:
         self.pending.pop(seq, None)
         return rsp
 
-    def send(self, did: int, cid: int, data: bytes = b""):
+    async def send(self, did: int, cid: int, data: bytes = b""):
         pkt = self.make_command(did, cid, data)
         log.info(f"Sending packet: {pkt.hex(' ').upper()} (length: {len(pkt)})")
-        self.transport.write(pkt)
+        await self.transport.write(pkt)
 
     def _on_receive(self, data: bytes):
         for raw in self.assembler.push(data):
