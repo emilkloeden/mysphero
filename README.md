@@ -1,3 +1,3 @@
 # MySphero
 
-My *first* attempt to learn how to provide a python API to connect to a Sphero Bolt+.
+My *first* attempt to learn how to provide a python API to connect to and control a Sphero Bolt+ bot.
